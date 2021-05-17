@@ -1,0 +1,51 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+    <h2>Current Count: <span id="count">0</span></h2>
+    <img src="https://media1.tenor.com/images/b3afd78db54dccbe7b3785e59dd45d3d/tenor.gif?itemid=14419267"
+         alt="Vegeta saying it's over 9000"
+         id="vegeta"
+         style="display:none;margin: 1em auto;" />
+</div>
+l
+@section Scripts
+{
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+
+            let count = document.getElementById('count');
+            let vegeta = document.getElementById('vegeta');
+            
+            // Start the connection.
+            let connection = new signalR
+                .HubConnectionBuilder()
+                .withUrl('@CountingHub.Endpoint')
+                .build();
+
+            connection.on('@CountingHub.Events.UpdateCount', function (value) {
+                count.innerText = value;                
+                if (value >= 9000) {
+                    vegeta.style.display = 'block';
+                    console.log("it's over 9000!");
+                } else {
+                    vegeta.style.display = 'none';
+                }                
+            });
+
+            // Transport fallback functionality is now built into start.
+            connection.start().then(function () {
+                console.log('connection started');
+            })
+            .catch(error => {
+                console.error(error.message);
+            });
+        });
+    </script>
+}
